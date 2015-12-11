@@ -1,6 +1,6 @@
 # DBPnet: Inferring cooperation of DNA binding proteins in 3D genome.
 
-Please take a look at the [documentation](http://wanglab.ucsd.edu/star/DBPnet/).
+Read the most updated [documentation](http://wanglab.ucsd.edu/star/DBPnet/).
 
 ## Build from source
 

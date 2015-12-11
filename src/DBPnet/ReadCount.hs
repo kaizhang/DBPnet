@@ -7,6 +7,11 @@
 
 module DBPnet.ReadCount
     ( readCount
+    , ReadCountOpt
+    , binSize
+    , pValue
+    , chromSize
+    , varFilter
     ) where
 
 import Bio.ChIPSeq
@@ -16,17 +21,14 @@ import Bio.Utils.Misc (readDouble, readInt)
 import Control.Monad (forM, forM_)
 import Control.Monad.Base (liftBase)
 import Control.Monad.Morph (hoist)
-import Control.Monad.Trans.Resource (runResourceT)
 import Control.Lens (makeFields, (^.), (.~))
 import qualified Data.Vector.Unboxed as U
 import qualified Data.Matrix.Unboxed as MU
 import qualified Data.Text as T
 import qualified Data.ByteString.Char8 as B
 import Data.Default
-import qualified Data.Conduit.Binary as Bin
-import qualified Data.Conduit.Zlib as Bin
-import qualified Data.Conduit.List as CL
-import Data.Conduit
+import qualified Data.Conduit.Zlib as Zlib
+import Conduit
 import Data.List
 import Data.Double.Conversion.ByteString (toFixed)
 import Statistics.Sample
@@ -51,35 +53,9 @@ instance Default ReadCountOpt where
     def = ReadCountOpt
         { readCountOptBinSize = 1000
         , readCountOptPValue = 1e-2
-        , readCountOptChromSize = hg19ChrSize
+        , readCountOptChromSize = []
         , readCountOptVarFilter  = 0.1
         }
-
-hg19ChrSize :: [(B.ByteString, Int)]
-hg19ChrSize = [ ("chr1", 249250621)
-              , ("chr2", 243199373)
-              , ("chr3", 198022430)
-              , ("chr4", 191154276)
-              , ("chr5", 180915260)
-              , ("chr6", 171115067)
-              , ("chr7", 159138663)
-              , ("chrX", 155270560)
-              , ("chr8", 146364022)
-              , ("chr9", 141213431)
-              , ("chr10", 135534747)
-              , ("chr11", 135006516)
-              , ("chr12", 133851895)
-              , ("chr13", 115169878)
-              , ("chr14", 107349540)
-              , ("chr15", 102531392)
-              , ("chr16", 90354753)
-              , ("chr17", 81195210)
-              , ("chr18", 78077248)
-              , ("chr20", 63025520)
-              , ("chr19", 59128983)
-              , ("chr22", 51304566)
-              , ("chr21", 48129895)
-              ]
 
 readCount :: [Experiment] -> FilePath -> ReadCountOpt -> IO [(String, FilePath)]
 readCount es outDir opt = withTmpDir outDir $ \tmp -> do
@@ -100,8 +76,8 @@ readCount es outDir opt = withTmpDir outDir $ \tmp -> do
                 fileFormat = input^.format
             case fileFormat of
                 Bed -> readBed fl $$ profiling (opt^.binSize) regions
-                BedGZip -> runResourceT $ Bin.sourceFile fl $= Bin.ungzip $=
-                           Bin.lines $= CL.map fromLine $$
+                BedGZip -> runResourceT $ sourceFile fl $= Zlib.ungzip $=
+                           linesUnboundedAsciiC $= mapC fromLine $$
                            hoist liftBase (profiling (opt^.binSize) regions)
                 _ -> undefined
 

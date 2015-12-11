@@ -38,8 +38,23 @@ To start, write down all samples in a new
           - path: path-to-data/RAD21.bed
           - format: Bed
 
-NOTE: all fields are case sensitive. If the format is not specified,
-DBPnet will try to guess the correct format based on the file names.
+.. note::
+
+    All fields are case sensitive. If the format is not specified, DBPnet will try to guess the correct format based on the file names.
+
+Chromosome size file
+^^^^^^^^^^^^^^^^^^^^
+
+This is a file describing the sizes of each chromosome. Example:
+
+::
+
+    chr1 [Tab] 249250621
+    chr2 [Tab] 243199373
+
+You need to provide this file to DBPnet through the command line option "--chrom_size <FILENAME>".
+For your convenience, DBPnet includes some common genome size (hg19 and mm10). You can
+use them by "--chrom_size hg19".
 
 Chromosome long range interactions (Optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -59,7 +74,7 @@ Running DBPnet
 
 ::
 
-    DBPnet samples.yaml --loop loops.tsv --output DBPnet_output
+    DBPnet samples.yaml --loop loops.tsv --output DBPnet_output --chrom_size hg19
 
 The results, including 2D and 3D cooperation, will be saved to directory
 ``DBPnet_output``.
@@ -68,7 +83,7 @@ The results, including 2D and 3D cooperation, will be saved to directory
 
 ::
 
-    DBPnet samples.yaml --output DBPnet_output
+    DBPnet samples.yaml --output DBPnet_output --chrom_size hg19
 
 The results, only 2D cooperation, will be saved to directory
 ``DBPnet_output``.

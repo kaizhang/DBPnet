@@ -25,7 +25,7 @@ that is in your system path, e.g., ``/usr/bin``.
 Download DBPnet source and install GHC
 --------------------------------------
 
-Download the source code of :download:`DBPnet <release/DBPnet-0.1.0.tar.gz>` and
+Download the source code of :download:`DBPnet <release/DBPnet-0.1.1.tar.gz>` and
 unpack it.
 
 ::

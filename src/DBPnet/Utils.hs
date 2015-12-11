@@ -4,6 +4,7 @@ module DBPnet.Utils
     ( withTmpDir
     , withTmpFile
     , readLoops
+    , readChrSize
     ) where
 
 import qualified Data.ByteString.Char8 as B
@@ -38,3 +39,12 @@ toLoop x =
        , BED3 (xs !! 3) (readInt $ xs !! 4) (readInt $ xs !! 5)
        )
 {-# INLINE toLoop #-}
+
+readChrSize :: FilePath -> IO [(B.ByteString, Int)]
+readChrSize fl = do
+    c <- B.readFile fl
+    return $ map f $ B.lines c
+  where
+    f x = let [chr,size] = B.words x
+          in (chr, readInt size)
+{-# INLINE readChrSize #-}
