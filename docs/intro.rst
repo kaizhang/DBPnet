@@ -52,9 +52,9 @@ This is a file describing the sizes of each chromosome. Example:
     chr1 [Tab] 249250621
     chr2 [Tab] 243199373
 
-You need to provide this file to DBPnet through the command line option "--chrom_size <FILENAME>".
+You need to provide this file to DBPnet through the command line option ``--chrom_size <FILENAME>``.
 For your convenience, DBPnet includes some common genome size (hg19 and mm10). You can
-use them by "--chrom_size hg19".
+use them by ``--chrom_size hg19``.
 
 Chromosome long range interactions (Optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
