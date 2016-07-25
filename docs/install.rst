@@ -1,9 +1,7 @@
 Installation
 ============
 
-DBPnet binary only runs under linux operating system (64-bit).
-
-1. Download the :download:`binary<release/DBPnet-0.1.1.x86_64>`.
+1. Go the `release page<https://github.com/kaizhang/DBPnet/releases>`_ and download the executable for your OS.
 
 2. Rename the binary.
 
