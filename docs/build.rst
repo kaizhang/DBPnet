@@ -1,16 +1,16 @@
 Build from source
 =================
 
-`GHC-7.10.2 <https://www.haskell.org/ghc/>`__ is required to build
+`GHC-7.10.2 <https://www.haskell.org/ghc/>`_ is required to build
 DBPnet from source. I recommend use
-`stack <http://docs.haskellstack.org/en/stable/README.html>`__ to
+`stack <http://docs.haskellstack.org/en/stable/README.html>`_ to
 install GHC and other DBPnet dependent packages.
 
 Install stack
 -------------
 
 Download the `latest release of
-stack <https://github.com/commercialhaskell/stack/releases>`__ for your
+stack <https://github.com/commercialhaskell/stack/releases>`_ for your
 platform. For example, if your system is CentOS 6.5, the "Linux 64-bit,
 libgmp4 for CentOS 6.x" is what you need.
 
@@ -25,7 +25,7 @@ that is in your system path, e.g., ``/usr/bin``.
 Download DBPnet source and install GHC
 --------------------------------------
 
-Download the source code of :download:`DBPnet <release/DBPnet-0.1.1.tar.gz>` and
+Download the `latest source code <https://github.com/kaizhang/DBPnet/releases>`_ and
 unpack it.
 
 ::

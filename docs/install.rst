@@ -1,7 +1,7 @@
 Installation
 ============
 
-1. Go the `release page<https://github.com/kaizhang/DBPnet/releases>`_ and download the executable for your OS.
+1. Go the `release page <https://github.com/kaizhang/DBPnet/releases>`__ and download the executable for your OS.
 
 2. Rename the binary.
 

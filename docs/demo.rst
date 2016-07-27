@@ -1,7 +1,7 @@
 Demo
 ====
 
-1. First download the :download:`example<release/example.tar.gz>`.
+1. First download the `example <http://wanglab.ucsd.edu/star/DBPnet/example.tar.gz>`_.
 
 2. Untar the data set.
 
