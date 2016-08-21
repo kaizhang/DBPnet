@@ -1,5 +1,9 @@
 # Revision history for DBPnet
 
-## 0.1.0  -- YYYY-mm-dd
+## 0.1.2  -- 2016-08-21
 
-* First version. Released on an unsuspecting world.
+* Fix dependency issue. Use latest libraries.
+
+## 0.1.1
+
+* First version.

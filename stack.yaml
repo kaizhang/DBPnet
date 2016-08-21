@@ -2,13 +2,10 @@ flags: {}
 
 packages:
     - '.'
-    - 'statistics'
 
 extra-deps:
-    - bioinformatics-toolkit-0.1.0
-    - statistics-0.13.2.4
-    - bbi-0.1.0
+    - bioinformatics-toolkit-0.2.2
     - samtools-0.2.4.1
     - glasso-0.1.0
 
-resolver: nightly-2015-12-04
+resolver: lts-6.12

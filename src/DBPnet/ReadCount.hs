@@ -1,9 +1,9 @@
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleContexts       #-}
+{-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE MultiParamTypeClasses  #-}
+{-# LANGUAGE OverloadedStrings      #-}
+{-# LANGUAGE TemplateHaskell        #-}
 
 module DBPnet.ReadCount
     ( readCount
@@ -14,35 +14,35 @@ module DBPnet.ReadCount
     , varFilter
     ) where
 
-import Bio.ChIPSeq
-import Bio.Data.Bed
-import Bio.Utils.Misc (readDouble, readInt)
+import           Bio.ChIPSeq
+import           Bio.Data.Bed
+import           Bio.Utils.Misc                    (readDouble, readInt)
+import           Conduit
+import           Control.Lens                      (makeFields, (.~), (^.))
+import           Control.Monad                     (forM, forM_)
+import           Control.Monad.Base                (liftBase)
+import           Control.Monad.Morph               (hoist)
+import qualified Data.ByteString.Char8             as B
+import qualified Data.Conduit.Zlib                 as Zlib
+import           Data.Default
+import           Data.Double.Conversion.ByteString (toFixed)
+import           Data.Int                          (Int32)
+import           Data.List
+import qualified Data.Matrix.Unboxed               as MU
+import qualified Data.Text                         as T
+import qualified Data.Vector.Unboxed               as U
+import           Shelly                            hiding (FilePath, withTmpDir)
+import           Statistics.Distribution           (complCumulative)
+import           Statistics.Distribution.Poisson   (poisson)
+import           Statistics.Sample
+import           System.IO
 
-import Control.Monad (forM, forM_)
-import Control.Monad.Base (liftBase)
-import Control.Monad.Morph (hoist)
-import Control.Lens (makeFields, (^.), (.~))
-import qualified Data.Vector.Unboxed as U
-import qualified Data.Matrix.Unboxed as MU
-import qualified Data.Text as T
-import qualified Data.ByteString.Char8 as B
-import Data.Default
-import qualified Data.Conduit.Zlib as Zlib
-import Conduit
-import Data.List
-import Data.Double.Conversion.ByteString (toFixed)
-import Statistics.Sample
-import Statistics.Distribution (complCumulative)
-import Statistics.Distribution.Poisson (poisson)
-import System.IO
-import Shelly hiding (FilePath, withTmpDir)
-
-import DBPnet.Type
-import DBPnet.Utils
+import           DBPnet.Type
+import           DBPnet.Utils
 
 data ReadCountOpt = ReadCountOpt
-    { readCountOptBinSize :: !Int
-    , readCountOptPValue :: !Double
+    { readCountOptBinSize   :: !Int
+    , readCountOptPValue    :: !Double
     , readCountOptChromSize :: ![(B.ByteString, Int)]
     , readCountOptVarFilter :: !Double   -- ^ remove constant signal
     } deriving (Show, Read)
@@ -75,10 +75,10 @@ readCount es outDir opt = withTmpDir outDir $ \tmp -> do
             let fl = input^.location
                 fileFormat = input^.format
             case fileFormat of
-                Bed -> readBed fl $$ profiling (opt^.binSize) regions
+                Bed -> readBed fl $$ countTagsBinBed (opt^.binSize) regions
                 BedGZip -> runResourceT $ sourceFile fl $= Zlib.ungzip $=
                            linesUnboundedAsciiC $= mapC fromLine $$
-                           hoist liftBase (profiling (opt^.binSize) regions)
+                           hoist liftBase (countTagsBinBed (opt^.binSize) regions)
                 _ -> undefined
 
         forM_ (zip (opt^.chromSize) $ merge readcounts) $ \((chr,_), v) -> do
@@ -107,7 +107,8 @@ readCount es outDir opt = withTmpDir outDir $ \tmp -> do
           where
             f = foldl1' (\acc x -> U.zipWith (+) acc x)
             counts = flip map rs $ \(values, _) ->
-                     map (U.map fromIntegral) values
+                     map (U.map (fromIntegral :: Int32 -> Double)) values
+-- we do not need to normalize or average because we don't use input/control
 --            n = fromIntegral $ length rs
 
     combineAndFilter xs output = do
