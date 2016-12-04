@@ -1,29 +1,31 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell   #-}
 module DBPnet.Correlation
     ( cisCorMat
     , transCorMat
     ) where
 
-import Control.Monad
-import Bio.Data.Bed
-import Bio.Utils.Misc
-import qualified Data.ByteString.Char8 as B
-import qualified Data.Vector.Unboxed as U
-import qualified Data.Vector.Unboxed.Mutable as UM
-import qualified Data.Vector as V
-import qualified Data.Text as T
-import Data.Maybe
-import Data.List
-import Data.List.Split
-import Data.Function (on)
-import Data.Ord (comparing)
-import Control.Lens
-import qualified Data.Matrix.Unboxed as MU
+import           Bio.Data.Bed
+import           Bio.Utils.Misc
+import           Conduit
+import           Control.Lens
+import           Control.Monad
+import           Control.Monad.Identity      (runIdentity)
+import qualified Data.ByteString.Char8       as B
+import           Data.Function               (on)
+import           Data.List
+import           Data.List.Split
+import qualified Data.Matrix.Unboxed         as MU
 import qualified Data.Matrix.Unboxed.Mutable as MUM
-import Statistics.Correlation (spearman)
+import           Data.Maybe
+import           Data.Ord                    (comparing)
+import qualified Data.Text                   as T
+import qualified Data.Vector                 as V
+import qualified Data.Vector.Unboxed         as U
+import qualified Data.Vector.Unboxed.Mutable as UM
+import           Statistics.Correlation      (spearman)
 
-import DBPnet.Utils (readLoops)
+import           DBPnet.Utils                (readLoops)
 
 cisCorMat :: [(String, FilePath)]
           -> IO ([B.ByteString], MU.Matrix Double)
@@ -56,8 +58,9 @@ transCorMat dat hic = do
     loops <- concatMap (\(a,b) -> [a,b]) <$> readLoops hic
 
     counts <- fmap V.fromList $ forM dat $ \(i,fl) -> do
-        beds <- readBed' fl
-        let rs = snd $ unzip $ intersectBedWith fn loops beds
+        beds <- readBed' fl :: IO [BED]
+        let rs = snd $ unzip $ runIdentity $ yieldMany loops =$=
+                intersectBedWith fn beds $$ sinkList
             fn [] = 0
             fn x = maximum . map (fromJust . _score) $ x
         return (i, U.fromList $ map (\[a,b] -> (a,b)) $ chunksOf 2 rs)

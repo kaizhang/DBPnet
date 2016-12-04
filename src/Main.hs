@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
 import Control.Lens((.~), (^.))
@@ -61,19 +63,36 @@ defaultMain (Options inFl outDir lp cutoff chrsize) = do
     case r of
         Left e -> error $ prettyPrintParseException e
         Right input -> do
-            shelly $ mkdir_p $ fromText $ T.pack outDir
+            let output2D = outDir ++ "/Network_2D/"
+                output3D = outDir ++ "/Network_3D/"
+                output2D3D = outDir ++ "/Network_2D_Plus_3D/"
+            shelly $ mkdir_p $ fromText $ T.pack output2D
+            shelly $ mkdir_p $ fromText $ T.pack output3D
+            shelly $ mkdir_p $ fromText $ T.pack output2D3D
             withTmpDir outDir $ \tmp -> do
                 rc <- readCount input tmp $ chromSize .~ chr $ def
-                cis <- cisCorMat rc
-                (dat, trans) <- case lp of
-                    Just l -> do
-                        t <- transCorMat rc l
-                        return (cisTransCombine cis t, Just t)
-                    Nothing ->
-                        return ( second (MU.map (\x -> if x < 0 then 0 else x)) cis
-                               , Nothing )
+                cis <- second zeroNeg <$> cisCorMat rc
 
-                outputResults outDir (buildNetwork dat cutoff) cis trans input
+                -- Output network built with 2D correlation only
+                outputResults output2D (fst cis) (buildNetwork (snd cis) cutoff)
+                    ("2D_correlation", snd cis) Nothing input
+
+                case lp of
+                    Just l -> do
+                        t <- second zeroNeg <$> transCorMat rc l
+                        -- Output network built with 3D correlation only
+                        outputResults output3D (fst t) (buildNetwork (snd t) cutoff)
+                            ("3D_correlation", snd t) Nothing input
+
+                        let hybrid = cisTransCombine cis t
+                        -- Output network built with 2d and 3d correlation
+                        outputResults output2D3D (fst hybrid)
+                            (buildNetwork (snd hybrid) cutoff)
+                            ("2D_correlation", snd cis)
+                            (Just ("3D_correlation", snd t)) input
+                    Nothing -> return ()
+  where
+    zeroNeg = MU.map (\x -> if x < 0 then 0 else x)
 
 main :: IO ()
 main = execParser opts >>= defaultMain

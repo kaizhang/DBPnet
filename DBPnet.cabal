@@ -1,5 +1,5 @@
 name:                DBPnet
-version:             0.1.2
+version:             0.1.3
 synopsis:            Inferring cooperation of DNA binding proteins in 3D genome.
 description:         Inferring cooperation of DNA binding proteins in 3D genome.
 license:             MIT
@@ -19,6 +19,8 @@ cabal-version:       >=1.10
 
 executable DBPnet
   main-is:             Main.hs
+  -- ghc-options:         -Wall -optl-static -optc-static -optl-pthread
+  ghc-options:         -Wall
   other-modules:
     Paths_DBPnet
     DBPnet.ReadCount
@@ -40,6 +42,7 @@ executable DBPnet
     , double-conversion
     , glasso
     , lens
+    , mtl
     , matrices >=0.4.3
     , mmorph
     , optparse-applicative
