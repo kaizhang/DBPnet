@@ -52,7 +52,7 @@ makeFields ''ReadCountOpt
 instance Default ReadCountOpt where
     def = ReadCountOpt
         { readCountOptBinSize = 1000
-        , readCountOptPValue = 1e-2
+        , readCountOptPValue = 1e-5
         , readCountOptChromSize = []
         , readCountOptVarFilter  = 0.1
         }
@@ -92,7 +92,7 @@ readCount es outDir opt = withTmpDir outDir $ \tmp -> do
                                             filter (\x -> x >= 0 && x < l) $
                                             [i-len..i-1] ++ [i+1,i+len]
                                   in estimateBG vec
-                        bg_local = maximum $ bg_glob : map getBG [14, 24]
+                        bg_local = maximum $ bg_glob : map getBG [5, 10]
                         c = v U.! i
                     case () of
                         _ | c == 0 -> B.hPutStrLn handle "0"

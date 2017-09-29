@@ -23,7 +23,7 @@ import qualified Data.Text                   as T
 import qualified Data.Vector                 as V
 import qualified Data.Vector.Unboxed         as U
 import qualified Data.Vector.Unboxed.Mutable as UM
-import           Statistics.Correlation      (spearman)
+import           Statistics.Correlation      (pearson)
 
 import           DBPnet.Utils                (readLoops)
 
@@ -47,7 +47,7 @@ cisCorMat dat = do
                           let (_, tfB) = counts V.! j
                               vec = U.filter (\(a,b) -> a /= 0 || b /= 0) $ U.zip tfA tfB
                               cor | U.length vec < 500 = 0
-                                  | otherwise = spearman vec
+                                  | otherwise = pearson vec
                           MUM.write m (i,j) cor
             return m
     return (header, mat)
@@ -78,7 +78,7 @@ transCorMat dat hic = do
                           let (_, tfB) = counts V.! j
                               vec = U.filter (\(a,b) -> a /= 0 || b /= 0) $ U.zipWith f tfA tfB
                               cor | U.length vec < 500 = 0
-                                  | otherwise = spearman vec
+                                  | otherwise = pearson vec
                           MUM.write m (i,j) cor
             return m
     return (header, mat)
