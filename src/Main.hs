@@ -13,6 +13,7 @@ import Data.Default
 import Shelly hiding (FilePath, withTmpDir)
 import qualified Data.Text as T
 import qualified Data.Matrix.Unboxed as MU
+import Data.Monoid ((<>))
 
 import DBPnet.ReadCount
 import DBPnet.Correlation

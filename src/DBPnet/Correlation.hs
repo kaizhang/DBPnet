@@ -30,9 +30,8 @@ import           DBPnet.Utils                (readLoops)
 cisCorMat :: [(String, FilePath)]
           -> IO ([B.ByteString], MU.Matrix Double)
 cisCorMat dat = do
-    counts <- fmap V.fromList $ forM dat $ \(i, fl) -> do
-        beds <- readBed' fl
-        return (i, U.fromList $ map (fromJust . _score) $ beds)
+    counts <- fmap V.fromList $ forM dat $ \(i, fl) ->
+        fmap ((,) i) $ readBed fl =$= mapC (fromJust . _score) $$ sinkVector
 
     let l = V.length counts
         header = map B.pack $ V.toList $ fst . V.unzip $ counts
@@ -62,7 +61,7 @@ transCorMat dat hic = do
         let rs = snd $ unzip $ runIdentity $ yieldMany loops =$=
                 intersectBedWith fn beds $$ sinkList
             fn [] = 0
-            fn x = maximum . map (fromJust . _score) $ x
+            fn x  = maximum . map (fromJust . _score) $ x
         return (i, U.fromList $ map (\[a,b] -> (a,b)) $ chunksOf 2 rs)
 
     let l = V.length counts
