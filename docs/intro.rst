@@ -31,12 +31,13 @@ To start, write down all samples in a new
     - target: CTCF
       files:
           - path: path-to-data/CTCF.bed.gz
-          - format: BedGZip
+            format: BedGZip
 
     - target: RAD21
       files:
-          - path: path-to-data/RAD21.bed
-          - format: Bed
+          - path: path-to-data/RAD21_rep1.bed
+            format: Bed
+          - path: path-to-data/RAD21_rep2.bed
 
 .. note::
 
