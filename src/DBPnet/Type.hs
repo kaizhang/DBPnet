@@ -28,7 +28,8 @@ import Shelly hiding (FilePath)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.Text as T
-import Control.Lens (makeFields, (^.), (.~))
+import Lens.Micro ((.~), (^.))
+import Lens.Micro.TH (makeFields)
 import qualified Data.HashMap.Strict as M
 import Crypto.Hash.MD5 (hash)
 import Numeric (showHex)

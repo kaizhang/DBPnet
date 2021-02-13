@@ -1,12 +1,12 @@
 name:                DBPnet
-version:             0.1.3
+version:             0.1.4
 synopsis:            Inferring cooperation of DNA binding proteins in 3D genome.
 description:         Inferring cooperation of DNA binding proteins in 3D genome.
 license:             MIT
 license-file:        LICENSE
 author:              Kai Zhang
 maintainer:          kai@kzhang.org
-copyright:           (c) 2015-2016 Kai Zhang
+copyright:           (c) 2015-2021 Kai Zhang
 category:            Bio
 build-type:          Simple
 
@@ -31,17 +31,18 @@ executable DBPnet
     DBPnet.Constants
 
   build-depends:
-      base >=4.8 && <5.0
+      base >=4.8
     , aeson
     , bioinformatics-toolkit >=0.2.2
     , bytestring
+    , conduit
     , conduit-extra
-    , conduit-combinators
     , cryptohash
     , data-default
     , double-conversion
     , glasso
-    , lens
+    , microlens
+    , microlens-th
     , mtl
     , matrices >=0.4.3
     , mmorph

@@ -10,7 +10,7 @@ module DBPnet.Network
 import           Algorithms.GLasso
 
 import           Bio.Utils.Misc
-import           Control.Lens
+import Lens.Micro 
 import           Control.Monad
 import qualified Data.ByteString.Char8 as B
 import qualified Data.HashMap.Strict   as M

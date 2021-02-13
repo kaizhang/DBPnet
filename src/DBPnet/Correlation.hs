@@ -6,23 +6,15 @@ module DBPnet.Correlation
     ) where
 
 import           Bio.Data.Bed
-import           Bio.Utils.Misc
 import           Conduit
-import           Control.Lens
+import Lens.Micro 
 import           Control.Monad
-import           Control.Monad.Identity      (runIdentity)
 import qualified Data.ByteString.Char8       as B
-import           Data.Function               (on)
-import           Data.List
 import           Data.List.Split
 import qualified Data.Matrix.Unboxed         as MU
 import qualified Data.Matrix.Unboxed.Mutable as MUM
-import           Data.Maybe
-import           Data.Ord                    (comparing)
-import qualified Data.Text                   as T
 import qualified Data.Vector                 as V
 import qualified Data.Vector.Unboxed         as U
-import qualified Data.Vector.Unboxed.Mutable as UM
 import           Statistics.Correlation      (spearman)
 
 import           DBPnet.Utils                (readLoops)
@@ -31,8 +23,8 @@ cisCorMat :: [(String, FilePath)]
           -> IO ([B.ByteString], MU.Matrix Double)
 cisCorMat dat = do
     counts <- fmap V.fromList $ forM dat $ \(i, fl) -> do
-        beds <- readBed' fl
-        return (i, U.fromList $ map (fromJust . _score) $ beds)
+        beds <- readBed fl
+        return (i, U.fromList $ map (^.bdgValue) beds)
 
     let l = V.length counts
         header = map B.pack $ V.toList $ fst . V.unzip $ counts
@@ -58,11 +50,11 @@ transCorMat dat hic = do
     loops <- concatMap (\(a,b) -> [a,b]) <$> readLoops hic
 
     counts <- fmap V.fromList $ forM dat $ \(i,fl) -> do
-        beds <- readBed' fl :: IO [BED]
-        let rs = snd $ unzip $ runIdentity $ yieldMany loops =$=
-                intersectBedWith fn beds $$ sinkList
-            fn [] = 0
-            fn x = maximum . map (fromJust . _score) $ x
+        beds <- readBed fl :: IO [BEDGraph]
+        let rs = runIdentity $ runConduit $ yieldMany loops .|
+                intersectBedWith fn beds .| sinkList
+            fn _ [] = 0
+            fn _ x = maximum $ map (^.bdgValue) x
         return (i, U.fromList $ map (\[a,b] -> (a,b)) $ chunksOf 2 rs)
 
     let l = V.length counts

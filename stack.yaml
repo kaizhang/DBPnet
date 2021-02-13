@@ -3,11 +3,16 @@ flags: {}
 packages:
     - '.'
 
-extra-deps:
-    - bioinformatics-toolkit-0.3.1
-    - HsHTSLib-1.3.2.0
-    - glasso-0.1.0
-    - hexpat-0.20.9
-    - List-0.5.2
+flags:
+  cryptonite:
+    use_target_attributes: false
 
-resolver: lts-7.11
+extra-deps:
+    - bioinformatics-toolkit-0.9.5
+    - HsHTSLib-1.9.2
+    - glasso-0.1.0
+    - clustering-0.4.1
+    #- hexpat-0.20.9
+#    - List-0.5.2
+
+resolver: lts-17.2

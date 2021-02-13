@@ -14,11 +14,12 @@ module DBPnet.ReadCount
     , varFilter
     ) where
 
-import           Bio.ChIPSeq
 import           Bio.Data.Bed
+import Bio.Data.Bed.Utils
 import           Bio.Utils.Misc                    (readDouble, readInt)
 import           Conduit
-import           Control.Lens                      (makeFields, (.~), (^.))
+import Lens.Micro ((.~), (^.))
+import Lens.Micro.TH (makeFields)
 import           Control.Monad                     (forM, forM_)
 import           Control.Monad.Base                (liftBase)
 import           Control.Monad.Morph               (hoist)
@@ -75,10 +76,8 @@ readCount es outDir opt = withTmpDir outDir $ \tmp -> do
             let fl = input^.location
                 fileFormat = input^.format
             case fileFormat of
-                Bed -> readBed fl $$ countTagsBinBed (opt^.binSize) regions
-                BedGZip -> runResourceT $ sourceFile fl $= Zlib.ungzip $=
-                           linesUnboundedAsciiC $= mapC fromLine $$
-                           hoist liftBase (countTagsBinBed (opt^.binSize) regions)
+                Bed -> runResourceT $ runConduit $ streamBed fl .| countTagsBinBed (opt^.binSize) regions
+                BedGZip -> runResourceT $ runConduit $ streamBedGzip fl .| countTagsBinBed (opt^.binSize) regions
                 _ -> undefined
 
         forM_ (zip (opt^.chromSize) $ merge readcounts) $ \((chr,_), v) -> do
@@ -129,8 +128,8 @@ readCount es outDir opt = withTmpDir outDir $ \tmp -> do
             dat' = MU.fromColumns $ concat $ snd $ unzip dat
         forM (zip ids $ MU.toRows dat') $ \(i, v) -> do
             let outFile = output ++ "/" ++ i ++ ".bed"
-            writeBed' outFile $ zipWith toBed idx $ U.toList v
+            writeBed outFile $ zipWith toBed idx $ U.toList v
             return (i, outFile)
       where
         highCV v = let (_,var) = meanVarianceUnb v in sqrt var >= opt^.varFilter
-        toBed (chr,i) x = BED chr i (i+(opt^.binSize)) Nothing (Just x) Nothing
+        toBed (chr,i) x = BEDGraph chr i (i+(opt^.binSize)) x

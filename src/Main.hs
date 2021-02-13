@@ -2,7 +2,7 @@
 
 module Main where
 
-import Control.Lens((.~), (^.))
+import Lens.Micro ((.~))
 import Control.Arrow (second)
 import Data.Yaml (decodeFileEither, prettyPrintParseException)
 import Paths_DBPnet (version)
@@ -18,7 +18,6 @@ import DBPnet.ReadCount
 import DBPnet.Correlation
 import DBPnet.Network
 import DBPnet.Utils
-import DBPnet.Type (Experiment)
 import DBPnet.Constants
 
 data Options = Options
@@ -27,6 +26,7 @@ data Options = Options
     , loop :: Maybe FilePath
     , lambda :: Double
     , chrSize :: String
+    , pValue :: Double
     } deriving (Show, Read)
 
 parser :: Parser Options
@@ -51,9 +51,15 @@ parser = Options
            ( long "chrom_size"
           <> short 'c'
           <> metavar "CHROM_SIZE" )
+     <*> option auto
+           ( long "pvalue"
+          <> short 'p'
+          <> value 0.3
+          <> help "p-value cutoff for peak calling, default: 0.3"
+          <> metavar "PVALUE" )
 
 defaultMain :: Options -> IO ()
-defaultMain (Options inFl outDir lp cutoff chrsize) = do
+defaultMain (Options inFl outDir lp cutoff chrsize pvalue) = do
     chr <- case chrsize of
         "hg19" -> return hg19ChrSize
         "mm10" -> return mm10ChrSize
