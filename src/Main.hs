@@ -26,7 +26,7 @@ data Options = Options
     , loop :: Maybe FilePath
     , lambda :: Double
     , chrSize :: String
-    , pValue :: Double
+    , peakCallPValue :: Double
     } deriving (Show, Read)
 
 parser :: Parser Options
@@ -50,17 +50,19 @@ parser = Options
      <*> strOption
            ( long "chrom_size"
           <> short 'c'
+          <> help "plain text file containing the chromosome sizes. Built-in chromosome sizes: mm10, hg19, hg38."
           <> metavar "CHROM_SIZE" )
      <*> option auto
            ( long "pvalue"
           <> short 'p'
-          <> value 0.3
-          <> help "p-value cutoff for peak calling, default: 0.3"
+          <> value 0.01
+          <> help "p-value cutoff for peak calling, default: 0.01"
           <> metavar "PVALUE" )
 
 defaultMain :: Options -> IO ()
 defaultMain (Options inFl outDir lp cutoff chrsize pvalue) = do
     chr <- case chrsize of
+        "hg38" -> return hg38ChrSize
         "hg19" -> return hg19ChrSize
         "mm10" -> return mm10ChrSize
         _ -> readChrSize chrsize
@@ -76,7 +78,7 @@ defaultMain (Options inFl outDir lp cutoff chrsize pvalue) = do
             shelly $ mkdir_p $ fromText $ T.pack output3D
             shelly $ mkdir_p $ fromText $ T.pack output2D3D
             withTmpDir outDir $ \tmp -> do
-                rc <- readCount input tmp $ chromSize .~ chr $ def
+                rc <- readCount input tmp $ chromSize .~ chr $ pValue .~ pvalue $ def
                 cis <- second zeroNeg <$> cisCorMat rc
 
                 -- Output network built with 2D correlation only
