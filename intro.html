@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; DBPNet 0.1.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="install.html" />
+    <link rel="prev" title="DBPnet: Inferring cooperation of DNA binding proteins in 3D genome." href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> DBPNet
+          </a>
+              <div class="version">
+                0.1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-install">How to install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start-guide">Quick start guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-input-data-for-dbpnet">Preparing input data for DBPnet</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#chip-seq-samples">ChIP-seq samples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chromosome-size-file">Chromosome size file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chromosome-long-range-interactions-optional">Chromosome long range interactions (Optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#running-dbpnet">Running DBPnet</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demo.html">Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build from source</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DBPNet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<section id="how-to-install">
+<h2>How to install<a class="headerlink" href="#how-to-install" title="Permalink to this headline">¶</a></h2>
+<p>see <a class="reference internal" href="install.html"><span class="doc">Installation</span></a> or <a class="reference internal" href="build.html"><span class="doc">Build from source</span></a>.</p>
+</section>
+<section id="quick-start-guide">
+<span id="quick-start"></span><h2>Quick start guide<a class="headerlink" href="#quick-start-guide" title="Permalink to this headline">¶</a></h2>
+<p>Make sure DBPnet executable is in your system path. Type
+<code class="docutils literal notranslate"><span class="pre">DBPnet</span> <span class="pre">--help</span></code> to see available command line options.</p>
+<section id="preparing-input-data-for-dbpnet">
+<h3>Preparing input data for DBPnet<a class="headerlink" href="#preparing-input-data-for-dbpnet" title="Permalink to this headline">¶</a></h3>
+<section id="chip-seq-samples">
+<h4>ChIP-seq samples<a class="headerlink" href="#chip-seq-samples" title="Permalink to this headline">¶</a></h4>
+<p>DBPnet analyzes aligned tag files in BED format to create the network.
+To start, write down all samples in a new
+<a class="reference external" href="http://www.yaml.org/start.html">yaml</a> file. Here is a example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">example</span><span class="o">.</span><span class="n">yaml</span>
+<span class="o">------------</span>
+<span class="o">-</span> <span class="n">target</span><span class="p">:</span> <span class="n">CTCF</span>
+  <span class="n">files</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">CTCF</span><span class="o">.</span><span class="n">bed</span><span class="o">.</span><span class="n">gz</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="n">BedGZip</span>
+
+<span class="o">-</span> <span class="n">target</span><span class="p">:</span> <span class="n">RAD21</span>
+  <span class="n">files</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">RAD21_rep1</span><span class="o">.</span><span class="n">bed</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="n">Bed</span>
+      <span class="o">-</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">data</span><span class="o">/</span><span class="n">RAD21_rep2</span><span class="o">.</span><span class="n">bed</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All fields are case sensitive. If the format is not specified, DBPnet will try to guess the correct format based on the file names.</p>
+</div>
+</section>
+<section id="chromosome-size-file">
+<h4>Chromosome size file<a class="headerlink" href="#chromosome-size-file" title="Permalink to this headline">¶</a></h4>
+<p>This is a file describing the sizes of each chromosome. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chr1</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="mi">249250621</span>
+<span class="n">chr2</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="mi">243199373</span>
+</pre></div>
+</div>
+<p>You need to provide this file to DBPnet through the command line option <code class="docutils literal notranslate"><span class="pre">--chrom_size</span> <span class="pre">&lt;FILENAME&gt;</span></code>.
+For your convenience, DBPnet includes some common genome size (hg19 and mm10). You can
+use them by <code class="docutils literal notranslate"><span class="pre">--chrom_size</span> <span class="pre">hg19</span></code>.</p>
+</section>
+<section id="chromosome-long-range-interactions-optional">
+<h4>Chromosome long range interactions (Optional)<a class="headerlink" href="#chromosome-long-range-interactions-optional" title="Permalink to this headline">¶</a></h4>
+<p>This is an optional input for DBPnet. It is a 6-field Tab-separated
+file, and each line consists of two genomic loci that form a loop. For
+example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chr1</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="mi">10000</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="mi">11000</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="n">chr1</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="mi">20000</span> <span class="p">[</span><span class="n">Tab</span><span class="p">]</span> <span class="mi">21000</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="running-dbpnet">
+<h3>Running DBPnet<a class="headerlink" href="#running-dbpnet" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>With a loop file:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DBPnet</span> <span class="n">samples</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">loop</span> <span class="n">loops</span><span class="o">.</span><span class="n">tsv</span> <span class="o">--</span><span class="n">output</span> <span class="n">DBPnet_output</span> <span class="o">--</span><span class="n">chrom_size</span> <span class="n">hg19</span>
+</pre></div>
+</div>
+<p>The results, including 2D and 3D cooperation, will be saved to directory
+<code class="docutils literal notranslate"><span class="pre">DBPnet_output</span></code>.</p>
+<ul class="simple">
+<li><p>Without a loop file:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DBPnet</span> <span class="n">samples</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">output</span> <span class="n">DBPnet_output</span> <span class="o">--</span><span class="n">chrom_size</span> <span class="n">hg19</span>
+</pre></div>
+</div>
+<p>The results, only 2D cooperation, will be saved to directory
+<code class="docutils literal notranslate"><span class="pre">DBPnet_output</span></code>.</p>
+<p>An example data set is available in <a class="reference internal" href="demo.html"><span class="doc">Demo</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="DBPnet: Inferring cooperation of DNA binding proteins in 3D genome." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2016, Kai Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
